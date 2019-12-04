@@ -55,6 +55,15 @@ class VideoStream:
 
             # Read first frame from the stream
             (self.grabbed, self.frame) = self.stream.read()
+        if self.PiOrUSB == 3: # USB camera
+            # Initialize the USB camera and the camera image stream
+            self.stream = cv2.VideoCapture(src)
+            ret = self.stream.set(3,resolution[0])
+            ret = self.stream.set(4,resolution[1])
+            #ret = self.stream.set(5,framerate) #Doesn't seem to do anything so it's commented out
+
+            # Read first frame from the stream
+            (self.grabbed, self.frame) = self.stream.read()
 
 	# Create a variable to control when the camera is stopped
         self.stopped = False
