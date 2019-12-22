@@ -37,7 +37,7 @@ def preprocess_perspective(file_name):
     maxHeight = 120
     dst = np.array([[0,0],[maxWidth-1,0],[maxWidth-1,maxHeight-1],[0, maxHeight-1]], np.float32)
     M = cv2.getPerspectiveTransform(temp_rect,dst)
-    warp = cv2.warpPerspective(image, M, (maxWidth, maxHeight)) # warp에 이미지 담김
+    warp = cv2.warpPerspective(image, M, (maxWidth, maxHeight), borderValue = (255,255,255)) # warp에 이미지 담김
     warp = cv2.cvtColor(warp,cv2.COLOR_BGR2GRAY)
     
     # wrap 이미지랑 꼭지점 담긴 행렬 돌려줌
@@ -59,7 +59,7 @@ def preprocess_perspective_simple(file_name):
     if len(rects)>1:
         return "too many cards" # 사각형을 여러개 찾았으니 error 표시
     
-    box = cv2.boxPoints(rect)
+    box = cv2.boxPoints(rects)
     
     box = box[np.argsort(box[:, 1])]
     if box[0][0]>box[1][0]:
@@ -75,7 +75,7 @@ def preprocess_perspective_simple(file_name):
     maxHeight = 120
     dst = np.array([[0,0],[maxWidth-1,0],[maxWidth-1,maxHeight-1],[0, maxHeight-1]], np.float32)
     M = cv2.getPerspectiveTransform(box,dst)
-    warp = cv2.warpPerspective(image, M, (maxWidth, maxHeight)) # warp에 이미지 담김
+    warp = cv2.warpPerspective(image, M, (maxWidth, maxHeight), borderValue = (255,255,255)) # warp에 이미지 담김
     warp = cv2.cvtColor(warp,cv2.COLOR_BGR2GRAY)
     
     # wrap 이미지랑 꼭지점 담긴 행렬 돌려줌
@@ -120,6 +120,11 @@ def shape_num(warp_image):
 file_name = '../../big_au/sample2/C10_0_5434.jpg'
 warp_img = preprocess_perspective(file_name)
 card = shape_num(warp_img)
+cv2.imshow('card', cv2.imread(file_name))
+cv2.waitKey(0)
+cv2.imshow('card', warp_img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 print(card)
 
             
