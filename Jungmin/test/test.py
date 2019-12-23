@@ -59,7 +59,7 @@ def preprocess_perspective_simple(file_name):
     if len(rects)>1:
         return "too many cards" # 사각형을 여러개 찾았으니 error 표시
     
-    box = cv2.boxPoints(rects)
+    box = cv2.boxPoints(rects[0])
     
     box = box[np.argsort(box[:, 1])]
     if box[0][0]>box[1][0]:
@@ -118,7 +118,8 @@ def shape_num(warp_image):
 
 
 file_name = '../../big_au/sample2/C10_0_5434.jpg'
-warp_img = preprocess_perspective(file_name)
+# warp_img = preprocess_perspective(file_name)
+warp_img = preprocess_perspective_simple(file_name)
 card = shape_num(warp_img)
 cv2.imshow('card', cv2.imread(file_name))
 cv2.waitKey(0)
