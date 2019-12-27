@@ -117,7 +117,7 @@ def shape_num(warp_image):
     return cardlist[min_num]
 
 
-file_name = '../../big_au/sample2/C10_0_5434.jpg'
+file_name = '../../big_au/sample2/C3_0_7070.jpg'
 # warp_img = preprocess_perspective(file_name)
 warp_img = preprocess_perspective_simple(file_name)
 card = shape_num(warp_img)

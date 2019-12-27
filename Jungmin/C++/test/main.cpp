@@ -20,6 +20,7 @@ int main()
 		return -1;
 	}
 	
+
 	namedWindow("image");
 	imshow("image", src);
 	
@@ -29,21 +30,41 @@ int main()
 	return 0;
 }
 
-/*
+
 void preprocess_perspective(Mat src)
 {
 	Mat bin;
-	threshold(src, bin, 100, 255, THRESH_BINARY_INV|THRESH_OTSU)
+	threshold(src, bin, 100, 255, THRESH_BINARY_INV | THRESH_OTSU);
 
 	vector<vector<Point>> contours;
 	
 	findContours(src, contours, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
 	RotatedRect rect_rotate;
-	for (vector<Point>&pts : contours) {
-		rect_rotate = minAreaRect(pts)
+	Point2f rect_pts[4];
 
+	int i = 0;
+
+	for (vector<Point>&pts : contours) {
+		
+		rect_rotate = minAreaRect(pts);
+		if (rect_rotate.size.area <= 9000) {
+			continue;
+		}
+		rect_rotate.points(rect_pts);
+
+		i += 1;
 	}
 
+	if (i != 1) {
+		if (i == 0) {
+			cerr << "Cannot find Contour" << endl;
+		}
+		if (i > 1) {
+			cerr << "too many Contours" << endl;
+		}
+	}
+	
+
 }
-*/
+
