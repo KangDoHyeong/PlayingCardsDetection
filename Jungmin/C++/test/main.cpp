@@ -34,6 +34,7 @@ int main()
 		return 0;
 	}
 
+	imshow("dst", dst);
 
 	waitKey(0);
 	destroyAllWindows();
@@ -57,6 +58,7 @@ int preprocess_perspective()
 	Point2f rect_pts[4];
 	Size2f rect_wh;
 
+	/*
 	int i = 0;
 	for (vector<Point>&pts : contours) {
 
@@ -64,11 +66,13 @@ int preprocess_perspective()
 		rect_wh = rect_rotate.size;
 
 
-		if ((rect_wh.area() < 9000.)) {
+		if (rect_wh.area() < 9000. ) {
 			continue;
 		}
 
+		
 		rect_rotate.points(rect_pts);
+		printf("%f\n", rect_wh.area());
 
 
 		Scalar c(rand() & 255, rand() & 255, rand() & 255);
@@ -77,17 +81,19 @@ int preprocess_perspective()
 	}
 
 	imshow("dst", src);
-
-	/*
+	*/
+	
 	int i = 0;
 
-	for (vector<Point>&pts : contours) {
+	for (vector<Point>&pts : contours) 
+	{
 		
 		rect_rotate = minAreaRect(pts);
 		rect_wh = rect_rotate.size;
 		
 		
-		if ( (rect_wh.area() < 9000.)| (rect_wh.area() < 14000.)) {
+		if ( (rect_wh.area() < 9000.)| (rect_wh.area() > 15000.)) 
+		{
 			continue;
 		}
 		
@@ -95,22 +101,56 @@ int preprocess_perspective()
 
 		i += 1;
 	}
-
-
-
 	
-	if (i != 1) {
-		if (i == 0) {
+	if (i != 1) 
+	{
+		if (i == 0)
+		{
 			cerr << "Cannot find Contour" << endl;
 			return -1;
 		}
-		if (i > 1) {
+		if (i > 1) 
+		{
 			cerr << "too many Contours" << endl;
 			return -1;
 		}
 	}
+	
+	Point2f temp;
+
+	if (rect_pts[0].x > rect_pts[1].x) 
+	{
+		srcQuad[0] = rect_pts[1];
+		srcQuad[1] = rect_pts[0];
+	}
+	else 
+	{
+		srcQuad[0] = rect_pts[0];
+		srcQuad[1] = rect_pts[1];
+	}
+	
+	if (rect_pts[2].x > rect_pts[3].x) 
+	{
+		srcQuad[2] = rect_pts[3];
+		srcQuad[3] = rect_pts[2];
+	}
+	else 
+	{
+		srcQuad[2] = rect_pts[2];
+		srcQuad[3] = rect_pts[3];
+	}
+
+
+	if (srcQuad[0].x > srcQuad[2].x) 
+	{
+		temp = srcQuad[1];
 
 	
+	}
+
+
+	
+
 	srcQuad[0] = rect_pts[0];
 	srcQuad[1] = rect_pts[1];
 	srcQuad[2] = rect_pts[2];
@@ -127,8 +167,9 @@ int preprocess_perspective()
 	Mat pers = getPerspectiveTransform(srcQuad, dstQuad);
 	warpPerspective(src, dst, pers, Size(w, h));
 
-	imshow("dst", dst);
-	*/
+	
+	
 	return 0;
 }
 
+	
