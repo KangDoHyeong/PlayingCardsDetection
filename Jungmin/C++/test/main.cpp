@@ -8,6 +8,8 @@ Mat src, dst;
 Point2f srcQuad[4], dstQuad[4];
 
 int preprocess_perspective();
+void sort_points(Point2f rect_pts[4]);
+void shape_num(Mat dst);
 
 int main()
 {
@@ -116,46 +118,8 @@ int preprocess_perspective()
 		}
 	}
 	
-	Point2f temp;
-
-	if (rect_pts[0].x > rect_pts[1].x) 
-	{
-		srcQuad[0] = rect_pts[1];
-		srcQuad[1] = rect_pts[0];
-	}
-	else 
-	{
-		srcQuad[0] = rect_pts[0];
-		srcQuad[1] = rect_pts[1];
-	}
-	
-	if (rect_pts[2].x > rect_pts[3].x) 
-	{
-		srcQuad[2] = rect_pts[3];
-		srcQuad[3] = rect_pts[2];
-	}
-	else 
-	{
-		srcQuad[2] = rect_pts[2];
-		srcQuad[3] = rect_pts[3];
-	}
-
-
-	if (srcQuad[0].x > srcQuad[2].x) 
-	{
-		temp = srcQuad[1];
-
-	
-	}
-
-
-	
-
-	srcQuad[0] = rect_pts[0];
-	srcQuad[1] = rect_pts[1];
-	srcQuad[2] = rect_pts[2];
-	srcQuad[3] = rect_pts[3];
-
+	sort_points(rect_pts);
+	//rect_pts 소멸가능
 
 	int w = 100;
 	int h = 120;
@@ -167,9 +131,102 @@ int preprocess_perspective()
 	Mat pers = getPerspectiveTransform(srcQuad, dstQuad);
 	warpPerspective(src, dst, pers, Size(w, h));
 
-	
-	
 	return 0;
 }
 
-	
+void sort_points(Point2f rect_pts[4]) 
+{
+	/*
+	깔끔한 함수는 아니고 정렬알고리즘을 쓸까하다가
+	어차피 4개의 점밖에없는거 경우의 수 나눠서 줄여보자 해서 일단 대강 짜본거
+	이걸로 쓸지말지는 고민해야할문제!
+	*/
+	Point2f temp;
+
+	if (rect_pts[0].y > rect_pts[1].y)
+	{
+		srcQuad[0] = rect_pts[1];
+		srcQuad[1] = rect_pts[0];
+	}
+	else
+	{
+		srcQuad[0] = rect_pts[0];
+		srcQuad[1] = rect_pts[1];
+	}
+
+	if (rect_pts[2].y > rect_pts[3].y)
+	{
+		srcQuad[2] = rect_pts[3];
+		srcQuad[3] = rect_pts[2];
+	}
+	else
+	{
+		srcQuad[2] = rect_pts[2];
+		srcQuad[3] = rect_pts[3];
+	}
+
+	if (srcQuad[1].y > srcQuad[2].y)
+	{
+		if (srcQuad[0].y > srcQuad[2].y)
+		{
+			temp = srcQuad[0];
+			srcQuad[0] = srcQuad[2];
+			srcQuad[2] = temp;
+			if (srcQuad[2].y > srcQuad[3].y) { // 현재 2에 있는게 1에 있는 것보다 큰 값임
+				temp = srcQuad[1];
+				srcQuad[1] = srcQuad[3];
+				srcQuad[3] = temp;
+			}
+			else
+			{
+				temp = srcQuad[1];
+				srcQuad[1] = srcQuad[2];
+				srcQuad[2] = temp;
+				if (srcQuad[2].y > srcQuad[3].y) {
+					temp = srcQuad[2];
+					srcQuad[2] = srcQuad[3];
+					srcQuad[3] = temp;
+				}
+			}
+		}
+		else
+		{
+			temp = srcQuad[1];
+			srcQuad[1] = srcQuad[2];
+			srcQuad[2] = temp;
+			if (srcQuad[2].y > srcQuad[3].y) {
+				temp = srcQuad[2];
+				srcQuad[2] = srcQuad[3];
+				srcQuad[3] = temp;
+			}
+		}
+	}
+
+	if (srcQuad[0].x > srcQuad[1].x) {
+		temp = srcQuad[1];
+		srcQuad[1] = srcQuad[0];
+		srcQuad[0] = temp;
+	}
+
+	if (srcQuad[2].x < srcQuad[3].x) {
+		temp = srcQuad[2];
+		srcQuad[2] = srcQuad[3];
+		srcQuad[3] = temp;
+	}
+
+}
+
+
+void shape_num(Mat dst)
+{
+	Mat src1;
+	Mat dst_abs;
+	absdiff(dst, src1, dst_abs);
+	Scalar summation = sum(dst_abs);
+
+	if ((int)summation[0] > 2000000) //summation 꼴 봐야함
+	{
+		cout<< "can't classify card"<<endl;
+	}
+}
+
