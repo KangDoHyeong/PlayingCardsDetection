@@ -1,14 +1,19 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
+#include <string>
+#include <io.h>
 
 using namespace cv;
 using namespace std;
 
 Mat src, dst;
+Mat origin_img[52];
+string origin_img_name[52];
 Point2f srcQuad[4], dstQuad[4];
 
 int preprocess_perspective();
 void sort_points(Point2f rect_pts[4]);
+void origin_card();
 void shape_num(Mat dst);
 
 int main()
@@ -37,6 +42,9 @@ int main()
 	}
 
 	imshow("dst", dst);
+
+	origin_card();
+	shape_num(dst);
 
 	waitKey(0);
 	destroyAllWindows();
@@ -217,16 +225,58 @@ void sort_points(Point2f rect_pts[4])
 }
 
 
+void origin_card()
+{
+	string path = ".\\origin_card\\*.*";
+	struct _finddata_t fd;
+
+	int i = 0;
+	intptr_t handle;
+	if ((handle = _findfirst(path.c_str(), &fd)) == -1L)
+	{
+		cout << "No file in directory!" << endl;
+	}
+
+	do
+	{
+		if (fd.size != 0)
+		{
+			origin_img_name[i] = fd.name;
+			origin_img[i] = imread(".\\origin_card\\" + origin_img_name[i], IMREAD_GRAYSCALE);
+			//cout << fd.name << endl;
+			i += 1;
+		}
+
+	} while (_findnext(handle, &fd) == 0);
+
+	_findclose(handle);
+}
+
+
 void shape_num(Mat dst)
 {
-	Mat src1;
 	Mat dst_abs;
-	absdiff(dst, src1, dst_abs);
-	Scalar summation = sum(dst_abs);
+	Scalar summation;
+	int min_abs = 2500000;
+	int index = -1;
 
-	if ((int)summation[0] > 2000000) //summation ²Ã ºÁ¾ßÇÔ
+	for (int i = 0; i < 52; i++)
+	{
+		absdiff(dst, origin_img[i], dst_abs);
+		summation = sum(dst_abs);
+		if ((int)summation[0] < min_abs) {
+			min_abs = (int)summation[0];
+			index = i;
+		}
+	}
+
+	if (min_abs> 2000000) 
 	{
 		cout<< "can't classify card"<<endl;
+	}
+	else
+	{
+		cout << origin_img_name[index] << endl;
 	}
 }
 
