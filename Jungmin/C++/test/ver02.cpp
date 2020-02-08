@@ -1,7 +1,7 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 #include <string> 
-#include <io.h>  //파일 입출력 확인
+//#include <io.h>  //파일 입출력 확인
 
 using namespace cv;
 using namespace std;
@@ -220,30 +220,14 @@ private:
 public:
 	CardDeck()
 	{ 
-		string path = ".\\origin_card\\*.*";
-		struct _finddata_t fd;
+		string Name[52] = { "C10.jpg", "C2.jpg", "C3.jpg", "C4.jpg", "C5.jpg", "C6.jpg", "C7.jpg", "C8.jpg", "C9.jpg", "CA.jpg", "CJ.jpg", "CK.jpg", "CQ.jpg", "D10.jpg", "D2.jpg", "D3.jpg", "D4.jpg", "D5.jpg", "D6.jpg", "D7.jpg", "D8.jpg", "D9.jpg", "DA.jpg", "DJ.jpg", "DK.jpg", "DQ.jpg", "H10.jpg", "H2.jpg", "H3.jpg", "H4.jpg", "H5.jpg", "H6.jpg", "H7.jpg", "H8.jpg", "H9.jpg", "HA.jpg", "HJ.jpg", "HK.jpg", "HQ.jpg", "S10.jpg", "S2.jpg", "S3.jpg", "S4.jpg", "S5.jpg", "S6.jpg", "S7.jpg", "S8.jpg", "S9.jpg", "SA.jpg", "SJ.jpg", "SK.jpg", "SQ.jpg" };
 
-		int i = 0;
-		intptr_t handle;
-		if ((handle = _findfirst(path.c_str(), &fd)) == -1L)
+		for (int i = 0; i < 52; i++)
 		{
-			cout << "No file in directory!" << endl;
+			OriginCardName[i] = Name[i];
+			OriginCardList[i] = new Card(cv::imread(".\\origin_card\\" + Name[i], IMREAD_GRAYSCALE));
 		}
-
-		do
-		{
-			if (fd.size != 0)
-			{
-				OriginCardName[i]= fd.name;
-				OriginCardList[i]= new Card(cv::imread(".\\origin_card\\" + OriginCardName[i], IMREAD_GRAYSCALE));
-				
-				i += 1;
-			}
-
-		} while (_findnext(handle, &fd) == 0);
-
-	
-		_findclose(handle);
+		
 	}
 
 	~CardDeck()
