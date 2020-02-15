@@ -21,5 +21,8 @@
     <ClCompile Include="ver01.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ver03.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

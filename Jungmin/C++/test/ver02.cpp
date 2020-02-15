@@ -241,7 +241,7 @@ public:
 
 };
 
-
+/*
 int main()
 {
 	CardDeck deck;
@@ -282,3 +282,4 @@ void CardDeck::shape_num(Mat cardimgimg)
 		cout << OriginCardName[index] << endl;
 	}
 }
+*/
